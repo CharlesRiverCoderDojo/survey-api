@@ -1,2 +1,2 @@
-peewee
+peewee==2.9.2
 chalice==0.8.0
