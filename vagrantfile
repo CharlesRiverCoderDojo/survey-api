@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/centos-7.2"
+  config.ssh.insert_key = false
+
+  config.vm.provider :virtualbox do | vm |
+    vm.customize ["modifyvm", :id, "--memory", 1536]
+    vm.customize ["modifyvm", :id, "--cpus", "2"]
+    vm.customize ["modifyvm", :id, "--ioapic", "on"]
+    vm.customize ["modifyvm", :id, "--nictype1", "virtio"]
+    vm.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+  end
+
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 8000, host: 8000
+  config.vm.network :forwarded_port, guest: 5432, host: 55432
+
+  config.vm.synced_folder "app", "/home/vagrant/app", create: true
+
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/Mullen/vagrant/master/scripts/firewalld.sh", name: "Firewalld"
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/Mullen/vagrant/master/scripts/postgresql.sh", name: "PostgreSQL"
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/Mullen/vagrant/master/scripts/pip.sh", name: "PIP"
+end

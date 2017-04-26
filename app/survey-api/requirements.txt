@@ -1,0 +1,2 @@
+peewee
+chalice==0.8.0
